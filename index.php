@@ -13,10 +13,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($user) {
         $_SESSION['usuario'] = $user['usuario'];
         $_SESSION['nivel_acesso'] = $user['nivel_acesso'];
-        header('Location: selecao.php');
-        exit;
+
+        if ($user['nivel_acesso'] === 'marcacao') {
+            header('Location: marcacao/index.php');
+            exit;
+        } elseif ($user['nivel_acesso'] === 'auditoria') {
+            header('Location: auditoria/index.php');
+            exit;
+        }
     } else {
-        $erro = "Usuário ou senha inválidos!";
+        $erro = "Usuário ou senha incorretos.";
     }
 }
 ?>
@@ -39,88 +45,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         body {
             font-family: 'Orbitron', sans-serif;
-            background-image: url('css/imagens/4.jpg');
+            background-image: url('css/imagens/13.jpg');
+            /* imagem de fundo mantida */
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
             height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding-left: 8vw;
             color: white;
+            display: flex;
+            justify-content: center;
+            /* centraliza horizontalmente */
+            align-items: center;
+            /* centraliza verticalmente */
         }
 
         .login-container {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            max-width: 400px;
-            width: 100%;
-            margin-left: 300px;
-        }
-
-        .logo-area {
-            text-align: center;
-        }
-
-        .logo-title {
-            font-size: 100px;
-            font-weight: bold;
-            color: white;
-            margin-bottom: 80px;
-            margin-left: -60px;
-            /* Desloca para direita */
-        }
-
-        .logo-subtitle {
-            color: #00ffff;
-            font-size: 20px;
-            text-align: center;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            margin-left: -200px;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            text-align: left;
+            margin-top: 150px;
+            margin-right: 750px;
+            padding: 30px 40px;
+            /* mais espaço interno */
+            border-radius: 25px;
+            /* cantos ainda mais suaves */
+            width: 400px;
+            /* largura maior */
+            max-width: 90%;
+            /* responsivo em telas menores */
         }
 
         .form-group {
-            display: flex;
-            flex-direction: column;
+            margin-bottom: 20px;
+            text-align: left;
         }
 
         .form-group label {
             font-size: 14px;
-            color: #ccc;
+            color: #1A1D26;
             margin-bottom: 5px;
+            display: block;
         }
 
         .form-group input {
-            padding: 20px;
-            height: 60px;
-            border: none;
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #9CA0A6;
             border-radius: 50px;
-            background-color: black;
-            color: white;
-            font-size: 18px;
+            background-color: #1A1D26;
+            color: #EBEFF2;
+            font-size: 16px;
             outline: none;
-
         }
 
         .form-group input::placeholder {
-            color: #aaa;
+            color: #777;
         }
 
         .btn {
+            width: 100%;
             padding: 15px;
-            background-color: #00aaff;
-            color: white;
+            background-color: #0E3659;
+            color: #EBEFF2;
             border: none;
             border-radius: 50px;
             font-weight: bold;
@@ -130,28 +114,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .btn:hover {
-            background-color: #008ecc;
+            background-color: #9CA0A6;
             transform: scale(1.05);
         }
 
         .alert {
-            background-color: rgba(255, 0, 0, 0.1);
-            border: 1px solid red;
-            color: red;
-            padding: 10px;
-            border-radius: 10px;
-            text-align: center;
+            background-color: rgba(255, 0, 0, 0.15);
+            /* vermelho mais suave */
+            color: #ff4d4d;
+            /* vermelho mais claro */
+            padding: 12px 18px;
+            /* mais espaço interno */
+            border-radius: 5px;
+            /* cantos mais arredondados */
+            margin-bottom: 20px;
+            /* mais respiro abaixo */
+            font-size: 14px;
+            /* tamanho de texto suave */
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            /* leve sombra para profundidade */
         }
     </style>
 </head>
 
 <body>
-    <div class="login-container">
-        <div class="logo-area">
-            <div class="logo-subtitle">Monitoramento de Produção</div>
-            <div class="logo-title">TEMPUS</div>
-        </div>
 
+    <div class="login-container">
         <?php if (isset($erro)): ?>
             <div class="alert"><?= $erro ?></div>
         <?php endif; ?>
@@ -165,10 +153,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label for="senha">Password</label>
                 <input type="password" id="senha" name="senha" placeholder="Digite sua senha" required>
             </div>
-
             <button type="submit" class="btn">Login</button>
         </form>
     </div>
+
 </body>
 
 </html>

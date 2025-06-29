@@ -52,234 +52,218 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TEMPUS - Marcação</title>
     <style>
-        /* 🎯 Reset e fonte */
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+    }
 
-        /* 🌌 Fundo fixo */
-        body {
-            background: url('../css/imagens/12.jpg') no-repeat center center fixed;
-            background-size: cover;
-            color: #fff;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+    body {
+        background: #1A1D26;
+        color: #1A1D26;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
 
-        /* 🧠 Container principal */
-        .marcacao-container {
-            background-color: rgba(0, 0, 0, 0.9);
-            padding: 25px;
-            border-radius: 20px;
-            max-width: 1200px;
-            width: 100%;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
+    .marcacao-container {
+        background-color: #DDE2E7;
+        padding: 25px;
+        border-radius: 20px;
+        width: 90vw;
+        height: 90vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
 
-        /* 🔷 Título */
-        .marcacao-container h1 {
-            text-align: center;
-            font-size: 36px;
-            color: #0ff;
-        }
+    .marcacao-container h1 {
+        text-align: center;
+        font-size: 45px;
+        color: #1A1D26;
+    }
 
-        /* 📦 Informações */
-        .info-box {
-            display: flex;
-            justify-content: space-around;
-            background-color: rgba(255, 255, 255, 0.05);
-            padding: 12px;
-            border-radius: 12px;
-        }
+    .info-box {
+        display: flex;
+        justify-content: space-around;
+        background-color: #9CA0A6;
+        padding: 12px;
+        border-radius: 12px;
+    }
 
-        /* Texto info */
-        .info-box p {
-            font-size: 18px;
-        }
+    .info-box p {
+        font-size: 18px;
+        color: #1A1D26;
+    }
 
-        /* 🎛️ Botões principais */
-        .actions {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
+    .actions {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
 
-        /* 🔘 Botões */
-        .btn {
-            background-color: #0ff;
-            color: #000;
-            padding: 10px 25px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-            border: none;
-        }
+    .btn {
+        background-color: #9CA0A6;
+        color: #1A1D26;
+        padding: 10px 25px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.3s;
+        border: none;
+    }
 
-        .btn:hover {
-            background-color: #00d5d5;
-            transform: scale(1.05);
-        }
+    .btn:hover {
+        background-color: #c2c6cb;
+        transform: scale(1.05);
+    }
 
-        /* ⚠️ Botão de perigo */
-        .btn-danger {
-            background-color: transparent;
-            border: 2px solid red;
-            color: red;
-        }
+    .btn-danger {
+        background-color: red;
+        border: 2px solid red;
+        color: white;
+    }
 
-        .btn-danger:hover {
-            background-color: red;
-            color: white;
-        }
+    .btn-danger:hover {
+        background-color: red;
+        color: white;
+    }
 
-        /* 🔸 Botões pequenos */
-        .btn-small {
-            padding: 6px 12px;
-            font-size: 14px;
-        }
+    .btn-small {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
 
-        .btn-deletar {
-            background:rgb(255, 3, 3);
-            padding: 6px 12px;
-            font-size: 14px;
-        }
-        .btn-deletar:hover {
-            background-color: red;
-            color: white;
-        }
+    .btn-deletar {
+        background: rgb(255, 3, 3);
+        color:white;
+        padding: 6px 12px;
+        font-size: 14px;
+    }
 
-        /* 🔥 Área da tabela COM SCROLL apenas nela */
-        .production-form {
-            max-height: 50vh;
-            overflow-y: auto;
-            border-radius: 12px;
-        }
+    .btn-deletar:hover {
+        background-color: red;
+        color: white;
+    }
 
-        /* 🧾 Tabela */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+    .production-form {
+        max-height: 50vh;
+        overflow-y: auto;
+        border-radius: 12px;
+    }
 
-        /* 🎯 Cabeçalho da tabela FIXO */
-        table thead th {
-            position: sticky;
-            top: 0;
-            background-color: rgba(0, 255, 255, 0.3);
-            backdrop-filter: blur(5px);
-            z-index: 2;
-            color: #0ff;
-            font-weight: 600;
-        }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
 
-        /* 🔲 Células */
-        table th,
-        table td {
-            padding: 10px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        }
+    table thead th {
+        position: sticky;
+        top: 0;
+        background-color: #C5C9CF;
+        backdrop-filter: blur(5px);
+        z-index: 2;
+        color: #1A1D26;
+        font-weight: 600;
+    }
 
-        /* Efeito hover na linha */
-        table tr:hover {
-            background-color: rgba(255, 255, 255, 0.08);
-        }
+    table th,
+    table td {
+        padding: 10px;
+        text-align: center;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
 
-        /* 🖊️ Inputs e selects */
-        input[type="number"],
-        input[type="text"],
-        select {
-            padding: 6px 10px;
-            border-radius: 8px;
-            border: none;
-            background-color: rgba(255, 255, 255, 0.9);
-            color: #000;
-        }
+    table tr:hover {
+        background-color: rgba(0, 0, 0, 0.04);
+    }
 
-        input:focus,
-        select:focus {
-            box-shadow: 0 0 5px #0ff;
-        }
+    input[type="number"],
+    input[type="text"],
+    select {
+        padding: 6px 10px;
+        border-radius: 8px;
+        border: none;
+        background-color: #fff;
+        color: #1A1D26;
+    }
 
-        /* 📊 Total do horário */
-        .total-box {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 20px;
-        }
+    input:focus,
+    select:focus {
+        box-shadow: 0 0 5px #9CA0A6;
+    }
 
-        .total-box span {
-            color: #0ff;
-            font-weight: 600;
-        }
+    .total-box {
+        text-align: center;
+        margin-top: 10px;
+        font-size: 40px;
+    }
 
-        /* ➕ Área adicionar funcionário (FIXA) */
-        .add-funcionario {
-            background-color: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 12px;
-        }
+    .total-box span {
+        color: #1A1D26;
+        font-weight: 600;
+    }
 
-        .add-funcionario h3 {
-            text-align: center;
-            margin-bottom: 10px;
-            color: #0ff;
-        }
+    .add-funcionario {
+        background-color: #C5C9CF;
+        padding: 15px;
+        border-radius: 12px;
+    }
 
-        .add-funcionario form {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
+    .add-funcionario h3 {
+        font-size: 30px;
+        text-align: center;
+        margin-bottom: 10px;
+        color: #1A1D26;
+    }
 
-        /* 🔼🔽 Ordem */
-        .ordem-controls {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
+    .add-funcionario form {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
 
-        .ordem-controls button {
-            background-color: #0ff;
-            border: none;
-            border-radius: 5px;
-            padding: 3px;
-            cursor: pointer;
-        }
+    .ordem-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
 
-        .ordem-controls button:hover {
-            background-color: #00d5d5;
-        }
+    .ordem-controls button {
+        background-color: #9CA0A6;
+        border: none;
+        border-radius: 5px;
+        padding: 3px;
+        cursor: pointer;
+        color: #1A1D26;
+    }
 
-        /* Status colors */
-        .status-baixo {
-            color: #e74c3c;
-            font-weight: bold;
-        }
+    .ordem-controls button:hover {
+        background-color: #EBEFF2;
+    }
 
-        .status-razoavel {
-            color: #f39c12;
-            font-weight: bold;
-        }
+    .status-baixo {
+        color: #e74c3c;
+        font-weight: bold;
+    }
 
-        .status-meta {
-            color: #27ae60;
-            font-weight: bold;
-        }
-    </style>
+    .status-razoavel {
+        color: #f39c12;
+        font-weight: bold;
+    }
+
+    .status-meta {
+        color: #27ae60;
+        font-weight: bold;
+    }
+</style>
 </head>
 
 <body>
@@ -343,19 +327,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </tbody>
             </table>
 
-            <div class="total-box">
-                <h3>Total do Horário: <span id="totalHorario">0</span> copos</h3>
-            </div>
+            
         </div>
 
         <div class="add-funcionario">
             <h3>Adicionar Funcionário</h3>
+            
             <form method="POST">
                 <input type="text" name="nome" placeholder="Nome" required>
                 <input type="number" name="numero" placeholder="Número" required>
                 <button type="submit" name="adicionar_funcionario" class="btn">Adicionar</button>
             </form>
         </div>
+        <div class="total-box">
+                <h3>Total do Horário: <span id="totalHorario">0</span> copos</h3>
+            </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>

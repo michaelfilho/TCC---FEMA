@@ -16,16 +16,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         switch ($acao) {
             case 'excluir':
                 $id = $_POST['id_funcionario'] ?? '';
-
+            
                 if ($id) {
-                    $stmt = $pdo->prepare("DELETE FROM funcionarios WHERE id_funcionario = ?");
-                    if ($stmt->execute([$id])) {
+                    try {
+                        // Inicia uma transação
+                        $pdo->beginTransaction();
+            
+                        // Exclui registros na tabela producao primeiro
+                        $stmt1 = $pdo->prepare("DELETE FROM producao WHERE id_funcionario = ?");
+                        $stmt1->execute([$id]);
+            
+                        // Agora exclui o funcionário
+                        $stmt2 = $pdo->prepare("DELETE FROM funcionarios WHERE id_funcionario = ?");
+                        $stmt2->execute([$id]);
+            
+                        // Finaliza a transação
+                        $pdo->commit();
+            
                         echo json_encode(['status' => 'success']);
                         exit;
-                    } else {
-                        echo json_encode(['status' => 'error', 'message' => 'Falha ao excluir.']);
+                    } catch (Exception $e) {
+                        // Reverte a transação em caso de erro
+                        $pdo->rollBack();
+                        echo json_encode([
+                            'status' => 'error',
+                            'message' => 'Erro ao excluir: ' . $e->getMessage()
+                        ]);
                         exit;
                     }
+                } else {
+                    echo json_encode(['status' => 'error', 'message' => 'ID do funcionário inválido.']);
+                    exit;
                 }
 
             case 'salvar_producao':

@@ -18,6 +18,8 @@ $datas = $pdo->query("SELECT DISTINCT data FROM producao ORDER BY data DESC")->f
     <title>TEMPUS - Avaliação</title>
     <link rel="stylesheet" href="../../css/style.css">
     <style>
+
+        q
         .avaliacao-container {
             max-width: 1000px;
             margin: 20px auto;
@@ -41,6 +43,11 @@ $datas = $pdo->query("SELECT DISTINCT data FROM producao ORDER BY data DESC")->f
     </style>
 </head>
 <body>
+<div class="sidebar">
+        <a href="../index.php">Relatório de Comportamento</a>
+        <a href="../metas/definir_meta.php">Definir Meta</a>
+        <a href="../index.php">Voltar</a>
+    </div>
     <div class="avaliacao-container">
         <h1>Relatório de Comportamento</h1>
         
@@ -53,8 +60,6 @@ $datas = $pdo->query("SELECT DISTINCT data FROM producao ORDER BY data DESC")->f
                     <?php endforeach; ?>
                 </select>
                 <button type="submit" class="btn">Gerar Relatório</button>
-                <a href="../../selecao.php" class="btn">Voltar</a>
-
             </form>
         </div>
         

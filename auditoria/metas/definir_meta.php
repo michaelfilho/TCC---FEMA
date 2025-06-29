@@ -80,7 +80,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nova_meta'])) {
             </div>
             <button type="submit" class="btn">Atualizar Meta</button>
         </form>
-
         <a href="../../selecao.php" class="btn btn-logout">Voltar</a>
     </div>
 </body>

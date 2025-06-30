@@ -13,9 +13,39 @@ body {
     padding: 20px;
 }
 
+.sidebar {
+    width: 220px;
+    background-color: #1A1D26;
+    color: white;
+    padding-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-left: 50px;
+}
+
+.sidebar a {
+    color: #EBEFF2;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background 0.3s;
+}
+
+.sidebar a:hover {
+    background-color: #132B40;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 40px;
+    background-color: #EBEFF2;
+}
+
 /* Componentes reutilizáveis */
 .btn {
-    background-color: #3498db;
+    background-color: #0E3659;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -58,7 +88,7 @@ body {
     color: #721c24;
     border: 1px solid #f5c6cb;
 }
-    
+
 /* Seleção */
 .selection-container {
     background-color: white;
@@ -200,5 +230,5 @@ body {
 
 .relatorio-total {
     font-weight: bold;
-    background-color: #e8f4fd;
+    background-color: #f8f9fa;
 }

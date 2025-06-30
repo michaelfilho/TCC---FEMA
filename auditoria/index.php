@@ -12,10 +12,12 @@ $datas = $pdo->query("SELECT DISTINCT data FROM producao ORDER BY data DESC")->f
 
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TEMPUS - Auditoria</title>
+    <link rel="shortcut icon" href="../css/imagens/1.png" type="image/x-icon">
     <link rel="stylesheet" href="../css/style.css">
     <style>
         body {
@@ -23,36 +25,6 @@ $datas = $pdo->query("SELECT DISTINCT data FROM producao ORDER BY data DESC")->f
             font-family: Arial, sans-serif;
             display: flex;
             height: 100vh;
-        }
-
-        .sidebar {
-            width: 220px;
-            background-color: #1A1D26;
-            color: white;
-            padding-top: 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            padding-left: 50px;
-        }
-
-        .sidebar a {
-            color: #EBEFF2;
-            text-decoration: none;
-            font-weight: 600;
-            padding: 10px;
-            border-radius: 8px;
-            transition: background 0.3s;
-        }
-
-        .sidebar a:hover {
-            background-color: #132B40;
-        }
-
-        .main-content {
-            flex-grow: 1;
-            padding: 40px;
-            background-color: #EBEFF2;
         }
 
         .btn {
@@ -76,9 +48,11 @@ $datas = $pdo->query("SELECT DISTINCT data FROM producao ORDER BY data DESC")->f
         }
     </style>
 </head>
+
 <body>
     <!-- Barra lateral -->
     <div class="sidebar">
+        <a href="index.php">Relatório de Produçao</a>
         <a href="avaliacao/index.php">Relatório de Comportamento</a>
         <a href="metas/definir_meta.php">Definir Meta</a>
         <a href="../index.php">Voltar</a>
@@ -88,7 +62,7 @@ $datas = $pdo->query("SELECT DISTINCT data FROM producao ORDER BY data DESC")->f
     <div class="main-content">
         <div class="auditoria-container">
             <h1>Relatório de Produção</h1>
-            
+
             <div class="date-selector">
                 <form id="relatorioForm">
                     <label for="data">Selecione a data:</label>
@@ -100,7 +74,7 @@ $datas = $pdo->query("SELECT DISTINCT data FROM producao ORDER BY data DESC")->f
                     <button type="submit" class="btn">Gerar Relatório</button>
                 </form>
             </div>
-            
+
             <div id="relatorioResultado" class="relatorio-resultado">
                 <!-- Resultado do relatório será inserido aqui -->
             </div>
@@ -109,4 +83,5 @@ $datas = $pdo->query("SELECT DISTINCT data FROM producao ORDER BY data DESC")->f
 
     <script src="../js/script.js"></script>
 </body>
+
 </html>

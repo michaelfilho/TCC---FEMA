@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: marcacao/index.php');
             exit;
         } elseif ($user['nivel_acesso'] === 'auditoria') {
-            header('Location: auditoria/index.php');
+            header('Location: auditoria/inicio.php');
             exit;
         }
     } else {
@@ -34,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TEMPUS - Login</title>
+    <link rel="shortcut icon" href="css/imagens/1.png" type="image/x-icon">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
 

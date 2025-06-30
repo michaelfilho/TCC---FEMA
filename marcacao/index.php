@@ -51,219 +51,264 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TEMPUS - Marcação</title>
+    <link rel="shortcut icon" href="../css/imagens/1.png" type="image/x-icon">
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'Poppins', sans-serif;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
 
-    body {
-        background: #1A1D26;
-        color: #1A1D26;
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-    }
+        body {
+            background: #12151C;
+            color: #1A1D26;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            min-height: 100vh;
+        }
 
-    .marcacao-container {
-        background-color: #DDE2E7;
-        padding: 25px;
-        border-radius: 20px;
-        width: 90vw;
-        height: 90vh;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
+        .marcacao-container {
+            background-color: #f1f3f6;
+            padding: 30px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 1800px;
+            height: auto;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
 
-    .marcacao-container h1 {
-        text-align: center;
-        font-size: 45px;
-        color: #1A1D26;
-    }
+        .marcacao-container h1 {
+            text-align: center;
+            font-size: 42px;
+            color: #1A1D26;
+        }
 
-    .info-box {
-        display: flex;
-        justify-content: space-around;
-        background-color: #9CA0A6;
-        padding: 12px;
-        border-radius: 12px;
-    }
+        .info-box {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            background-color: #cfd4db;
+            padding: 14px 20px;
+            border-radius: 12px;
+        }
 
-    .info-box p {
-        font-size: 18px;
-        color: #1A1D26;
-    }
+        .info-box p {
+            font-size: 18px;
+            font-weight: 500;
+            color: #1A1D26;
+        }
 
-    .actions {
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-    }
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
 
-    .btn {
-        background-color: #9CA0A6;
-        color: #1A1D26;
-        padding: 10px 25px;
-        border-radius: 10px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: 0.3s;
-        border: none;
-    }
+        .btn {
+            background-color: #343A40;
+            color: #ffffff;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
 
-    .btn:hover {
-        background-color: #c2c6cb;
-        transform: scale(1.05);
-    }
+        .btn:hover {
+            background-color: #4a5056;
+            transform: scale(1.05);
+        }
 
-    .btn-danger {
-        background-color: red;
-        border: 2px solid red;
-        color: white;
-    }
+        .btn-danger {
+            background-color: red;
+            border: none;
+        }
 
-    .btn-danger:hover {
-        background-color: red;
-        color: white;
-    }
+        .btn-danger:hover {
+            background-color: red;
+        }
 
-    .btn-small {
-        padding: 6px 12px;
-        font-size: 14px;
-    }
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 14px;
+        }
 
-    .btn-deletar {
-        background: rgb(255, 3, 3);
-        color:white;
-        padding: 6px 12px;
-        font-size: 14px;
-    }
+        .btn-deletar {
+            background-color: red;
+            color: white;
+            padding: 6px 12px;
+            font-size: 14px;
+            border: none;
+        }
 
-    .btn-deletar:hover {
-        background-color: red;
-        color: white;
-    }
+        .btn-deletar:hover {
+            background-color: red;
+            color: white;
+        }
 
-    .production-form {
-        max-height: 50vh;
-        overflow-y: auto;
-        border-radius: 12px;
-    }
+        .btn-danger:hover {
+            background-color: red;
+            color: white;
+        }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
 
-    table thead th {
-        position: sticky;
-        top: 0;
-        background-color: #C5C9CF;
-        backdrop-filter: blur(5px);
-        z-index: 2;
-        color: #1A1D26;
-        font-weight: 600;
-    }
+        .production-form {
+            border-radius: 12px;
+            overflow-y: auto;
+            max-height: 400px;
+            border: 1px solid #ccc;
+        }
 
-    table th,
-    table td {
-        padding: 10px;
-        text-align: center;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    }
+        .production-form table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 100%;
+        }
 
-    table tr:hover {
-        background-color: rgba(0, 0, 0, 0.04);
-    }
+        .production-form thead th {
+            position: sticky;
+            top: 0;
+            background-color: #dfe3e8;
+            z-index: 1;
+            text-align: center;
+            padding: 12px;
+            font-size: 16px;
+            color: #1A1D26;
+        }
 
-    input[type="number"],
-    input[type="text"],
-    select {
-        padding: 6px 10px;
-        border-radius: 8px;
-        border: none;
-        background-color: #fff;
-        color: #1A1D26;
-    }
+        .production-form th,
+        .production-form td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #ccc;
+        }
 
-    input:focus,
-    select:focus {
-        box-shadow: 0 0 5px #9CA0A6;
-    }
+        .production-form tr:hover {
+            background-color: #f0f2f5;
+        }
 
-    .total-box {
-        text-align: center;
-        margin-top: 10px;
-        font-size: 40px;
-    }
+        input[type="number"],
+        input[type="text"],
+        select {
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            width: 100%;
+            max-width: 130px;
+        }
 
-    .total-box span {
-        color: #1A1D26;
-        font-weight: 600;
-    }
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #9CA0A6;
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+        }
 
-    .add-funcionario {
-        background-color: #C5C9CF;
-        padding: 15px;
-        border-radius: 12px;
-    }
+        .total-box {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 600;
+        }
 
-    .add-funcionario h3 {
-        font-size: 30px;
-        text-align: center;
-        margin-bottom: 10px;
-        color: #1A1D26;
-    }
+        .total-box span {
+            color: #2c3e50;
+        }
 
-    .add-funcionario form {
-        display: flex;
-        gap: 10px;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
+        .add-funcionario {
+            background-color: #e3e6ea;
+            padding: 20px;
+            border-radius: 12px;
+        }
 
-    .ordem-controls {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-    }
+        .add-funcionario h3 {
+            text-align: center;
+            font-size: 26px;
+            margin-bottom: 12px;
+            color: #1A1D26;
+        }
 
-    .ordem-controls button {
-        background-color: #9CA0A6;
-        border: none;
-        border-radius: 5px;
-        padding: 3px;
-        cursor: pointer;
-        color: #1A1D26;
-    }
+        .add-funcionario form {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
 
-    .ordem-controls button:hover {
-        background-color: #EBEFF2;
-    }
+        .ordem-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
 
-    .status-baixo {
-        color: #e74c3c;
-        font-weight: bold;
-    }
+        .ordem-controls button {
+            background-color: #adb5bd;
+            border: none;
+            border-radius: 4px;
+            padding: 3px 6px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #1A1D26;
+            transition: background 0.2s ease;
+        }
 
-    .status-razoavel {
-        color: #f39c12;
-        font-weight: bold;
-    }
+        .ordem-controls button:hover {
+            background-color: #ced4da;
+        }
 
-    .status-meta {
-        color: #27ae60;
-        font-weight: bold;
-    }
-</style>
+        .status-baixo {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .status-razoavel {
+            color: #f39c12;
+            font-weight: bold;
+        }
+
+        .status-meta {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .info-box {
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .add-funcionario form {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            input[type="number"],
+            input[type="text"],
+            select {
+                max-width: 100%;
+            }
+
+            .production-form {
+                max-height: 300px;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -327,12 +372,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </tbody>
             </table>
 
-            
+
         </div>
 
         <div class="add-funcionario">
             <h3>Adicionar Funcionário</h3>
-            
+
             <form method="POST">
                 <input type="text" name="nome" placeholder="Nome" required>
                 <input type="number" name="numero" placeholder="Número" required>
@@ -340,8 +385,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
         </div>
         <div class="total-box">
-                <h3>Total do Horário: <span id="totalHorario">0</span> copos</h3>
-            </div>
+            <h3>Total do Horário: <span id="totalHorario">0</span> copos</h3>
+        </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>

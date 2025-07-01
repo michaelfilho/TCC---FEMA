@@ -20,7 +20,7 @@ $datas = $pdo->query("SELECT DISTINCT data FROM producao ORDER BY data DESC")->f
     <link rel="shortcut icon" href="../css/imagens/1.png" type="image/x-icon">
     <link rel="stylesheet" href="../css/style.css">
     <style>
-        body {
+       body {
             margin: 0;
             font-family: Arial, sans-serif;
             display: flex;
@@ -72,6 +72,7 @@ $datas = $pdo->query("SELECT DISTINCT data FROM producao ORDER BY data DESC")->f
                         <?php endforeach; ?>
                     </select>
                     <button type="submit" class="btn">Gerar Relatório</button>
+                    <button type="button" class="btn" id="baixarPdf" style="display:none;">Baixar PDF</button>
                 </form>
             </div>
 
@@ -80,8 +81,55 @@ $datas = $pdo->query("SELECT DISTINCT data FROM producao ORDER BY data DESC")->f
             </div>
         </div>
     </div>
-
+    <!-- Biblioteca html2canvas (necessária para o jsPDF funcionar com HTML) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="../js/script.js"></script>
+    <script>
+        document.getElementById('relatorioForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const dataSelecionada = document.getElementById('data').value;
+
+            fetch('relatorio.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: 'data=' + encodeURIComponent(dataSelecionada)
+                })
+                .then(response => response.text())
+                .then(html => {
+                    const resultado = document.getElementById('relatorioResultado');
+                    resultado.innerHTML = html;
+
+                    // Mostra botão PDF
+                    document.getElementById('baixarPdf').style.display = 'inline-block';
+                });
+        });
+
+        // Gera e baixa o PDF
+        document.getElementById('baixarPdf').addEventListener('click', function () {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('p', 'pt', 'a4'); // retrato, pontos, A4
+
+    const content = document.getElementById('relatorioResultado');
+
+    doc.html(content, {
+        callback: function (doc) {
+            doc.save('relatorio_producao.pdf');
+        },
+        x: 10,
+        y: 10,
+        autoPaging: 'text', // adiciona páginas se necessário
+        html2canvas: {
+            scale: 0.55, // reduz escala se necessário para caber na página
+            useCORS: true
+        }
+    });
+});
+    </script>
+
 </body>
 
 </html>

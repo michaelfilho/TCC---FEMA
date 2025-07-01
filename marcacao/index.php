@@ -53,7 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>TEMPUS - Marcação</title>
     <link rel="shortcut icon" href="../css/imagens/1.png" type="image/x-icon">
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
         * {
             margin: 0;
             padding: 0;
@@ -279,6 +280,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: #27ae60;
             font-weight: bold;
         }
+
+        /* Responsivo */
         @media (max-width: 768px) {
             .info-box {
                 flex-direction: column;

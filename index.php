@@ -37,14 +37,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="shortcut icon" href="css/imagens/1.png" type="image/x-icon">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
             font-family: 'Orbitron', sans-serif;
             background-image: url('css/imagens/13.jpg');
+            /* imagem de fundo mantida */
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -53,16 +56,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: white;
             display: flex;
             justify-content: center;
+            /* centraliza horizontalmente */
             align-items: center;
+            /* centraliza verticalmente */
         }
 
         .login-container {
             margin-top: 150px;
             margin-right: 750px;
             padding: 30px 40px;
+            /* mais espaço interno */
             border-radius: 25px;
+            /* cantos ainda mais suaves */
             width: 400px;
+            /* largura maior */
             max-width: 90%;
+            /* responsivo em telas menores */
         }
 
         .form-group {
@@ -112,12 +121,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .alert {
             background-color: rgba(255, 0, 0, 0.15);
+            /* vermelho mais suave */
             color: #ff4d4d;
+            /* vermelho mais claro */
             padding: 12px 18px;
+            /* mais espaço interno */
             border-radius: 5px;
+            /* cantos mais arredondados */
             margin-bottom: 20px;
+            /* mais respiro abaixo */
             font-size: 14px;
+            /* tamanho de texto suave */
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            /* leve sombra para profundidade */
         }
     </style>
 </head>

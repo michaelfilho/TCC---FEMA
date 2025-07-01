@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nova_meta'])) {
     <link rel="shortcut icon" href="../../css/imagens/1.png" type="image/x-icon">
     <link rel="stylesheet" href="../../css/style.css">
     <style>
-      body {
+        body {
             margin: 0;
             font-family: Arial, sans-serif;
             display: flex;
@@ -72,7 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nova_meta'])) {
             border-radius: 8px;
             box-shadow: 0 2px 8px;
             width: 600px;
+            /* aumentado */
             min-height: 50px;
+            /* opcional */
             padding: 40px 60px;
             box-sizing: border-box;
             text-align: center;

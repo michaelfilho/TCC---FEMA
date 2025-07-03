@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 } else {
                     echo 'erro';
                     exit;
-                }                
+                }
             case 'excluir':
                 $id = $_POST['id_funcionario'] ?? '';
             

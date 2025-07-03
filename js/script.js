@@ -1,4 +1,80 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const formAvaliacao = document.getElementById('avaliacaoForm');
+    const formRelatorio = document.getElementById('relatorioForm');
+    const relatorioResultado = document.getElementById('relatorioResultado');
+    const btnRelatorioPorHorario = document.getElementById('relatorioPorHorario');
+    const btnRelatorioHorario = document.getElementById('relatorioHorario');
+    const btnPdf = document.getElementById('baixarPdf');
+
+    // ✅ Função genérica
+    function carregarRelatorio(url, data) {
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `data=${encodeURIComponent(data)}`
+        })
+        .then(res => res.text())
+        .then(html => {
+            relatorioResultado.innerHTML = html;
+            if (btnPdf) btnPdf.style.display = 'inline-block';
+        })
+        .catch(err => {
+            console.error('Erro ao carregar relatório:', err);
+            relatorioResultado.innerHTML = `<p style="color:red;">Erro ao carregar relatório.</p>`;
+            if (btnPdf) btnPdf.style.display = 'none';
+        });
+    }
+
+    // ✅ Eventos para AVALIAÇÃO (relatório de comportamento)
+    if (formAvaliacao) {
+        formAvaliacao.addEventListener('submit', e => {
+            e.preventDefault();
+            const data = document.getElementById('data').value;
+            carregarRelatorio('relatorio.php', data);
+        });
+
+        if (btnRelatorioPorHorario) {
+            btnRelatorioPorHorario.addEventListener('click', () => {
+                const data = document.getElementById('data').value;
+                carregarRelatorio('relatorio_horario.php', data);
+            });
+        }
+    }
+
+    // ✅ Eventos para PRODUÇÃO (relatório de produção)
+    if (formRelatorio) {
+        formRelatorio.addEventListener('submit', e => {
+            e.preventDefault();
+            const data = document.getElementById('data').value;
+            carregarRelatorio('relatorio.php', data);
+        });
+
+        if (btnRelatorioHorario) {
+            btnRelatorioHorario.addEventListener('click', () => {
+                const data = document.getElementById('data').value;
+                carregarRelatorio('relatorio_horario.php', data);
+            });
+        }
+    }
+
+    // ✅ Botão PDF (com verificação)
+    if (btnPdf) {
+        btnPdf.addEventListener('click', () => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'pt', 'a4');
+
+            doc.html(relatorioResultado, {
+                callback: doc => doc.save('relatorio.pdf'),
+                x: 10,
+                y: 10,
+                autoPaging: 'text',
+                html2canvas: {
+                    scale: 0.55,
+                    useCORS: true
+                }
+            });
+        });
+    }
     // Marcação - Calcular total do horário
     function calcularTotal() {
         let total = 0;
@@ -22,10 +98,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (quantidade === 0) {
                 status = '-';
-            } else if (quantidade < meta * 0.5) { 
+            } else if (quantidade < meta * 0.5) {
                 status = 'Fora da Meta';
                 statusClass = 'status-baixo';
-            } else if (quantidade < meta) { 
+            } else if (quantidade < meta) {
                 status = 'Razoável';
                 statusClass = 'status-razoavel';
             } else {
@@ -46,6 +122,66 @@ document.addEventListener('DOMContentLoaded', function () {
                 atualizarStatus();
             });
         });
+
+        document.querySelectorAll('.btn-alterar-nome').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const idFuncionario = this.dataset.id;
+                const nomeAtual = this.dataset.nome;
+                const row = this.closest('tr');
+                const tdNome = row.querySelector('td:nth-child(3)');
+
+                // Cria input com nome atual
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = nomeAtual;
+                input.style.width = '150px';
+                input.classList.add('nome-input');
+
+                // Cria botão de salvar
+                const salvarBtn = document.createElement('button');
+                salvarBtn.textContent = '✔️';
+                salvarBtn.classList.add('btn', 'btn-small');
+                salvarBtn.style.marginLeft = '5px';
+
+                // Troca conteúdo da célula de nome
+                tdNome.innerHTML = '';
+                tdNome.appendChild(input);
+                tdNome.appendChild(salvarBtn);
+
+                salvarBtn.addEventListener('click', function () {
+                    const novoNome = input.value.trim();
+
+                    if (novoNome === '') {
+                        alert('O nome não pode estar vazio.');
+                        return;
+                    }
+
+                    fetch('processa.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `acao=alterar_nome&id_funcionario=${idFuncionario}&novo_nome=${encodeURIComponent(novoNome)}`
+                    })
+                        .then(response => response.text())
+                        .then(data => {
+                            if (data === 'sucesso') {
+                                tdNome.textContent = novoNome;
+                                btn.dataset.nome = novoNome;
+                                alert('Nome alterado com sucesso!');
+                            } else {
+                                tdNome.textContent = nomeAtual;
+                                alert('Erro ao alterar nome.');
+                            }
+                        })
+                        .catch(() => {
+                            tdNome.textContent = nomeAtual;
+                            alert('Erro ao processar requisição.');
+                        });
+                });
+            });
+        });
+
 
         document.querySelectorAll('.salvar').forEach(button => {
             button.addEventListener('click', function () {
@@ -193,16 +329,16 @@ document.addEventListener('DOMContentLoaded', function () {
                         .then(response => response.json())
                         .then(data => {
                             if (data.status === 'success') {
-                                tdCodigo.textContent = `#${novoCodigo}`;
+                                tdCodigo.textContent = `${novoCodigo}`;
                                 btn.dataset.codigo = novoCodigo;
                             } else {
                                 alert(data.message || "Erro ao alterar código");
-                                tdCodigo.textContent = `#${codigoAtual}`;
+                                tdCodigo.textContent = `${codigoAtual}`;
                             }
                         })
                         .catch(() => {
                             alert("Erro ao salvar código");
-                            tdCodigo.textContent = `#${codigoAtual}`;
+                            tdCodigo.textContent = `${codigoAtual}`;
                         })
                         .finally(() => {
                             btn.disabled = false;

@@ -14,6 +14,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $acao = $_POST['acao'] ?? 'salvar_producao';
 
         switch ($acao) {
+            
+            case 'alterar_nome':
+                $id = $_POST['id_funcionario'] ?? '';
+                $novoNome = trim($_POST['novo_nome'] ?? '');
+            
+                if ($id && $novoNome !== '') {
+                    try {
+                        $stmt = $pdo->prepare("UPDATE funcionarios SET nome = ? WHERE id_funcionario = ?");
+                        $stmt->execute([$novoNome, $id]);
+            
+                        echo 'sucesso';
+                        exit;
+                    } catch (Exception $e) {
+                        echo 'erro';
+                        exit;
+                    }
+                } else {
+                    echo 'erro';
+                    exit;
+                }                
             case 'excluir':
                 $id = $_POST['id_funcionario'] ?? '';
             

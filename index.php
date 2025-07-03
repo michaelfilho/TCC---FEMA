@@ -63,9 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .login-container {
             margin-top: 150px;
-            margin-right: 750px;
+            margin-right: 1050px;
             padding: 30px 40px;
-            /* mais espaço interno */
             border-radius: 25px;
             /* cantos ainda mais suaves */
             width: 400px;

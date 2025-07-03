@@ -52,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TEMPUS - Marcação</title>
     <link rel="shortcut icon" href="../css/imagens/1.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
@@ -63,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         body {
-            background: #12151C;
+            background: #1A1D26;
             color: #1A1D26;
             display: flex;
             justify-content: center;
@@ -360,12 +361,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </select>
                             </td>
                             <td>
-                                <button class="btn btn-small salvar">Salvar</button>
-                                <button class="btn btn-small btn-alterar-codigo" data-id="<?= $func['id_funcionario'] ?>"
-                                    data-codigo="<?= $func['numero'] ?>">
-                                    Alterar Código
-                                </button>
-                                <button class="btn btn-deletar excluir">Excluir</button>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-small btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Menu
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item btn-alterar-codigo" href=""
+                                            data-id="<?= $func['id_funcionario'] ?>"
+                                            data-codigo="<?= $func['numero'] ?>">Alterar Código</a>
+                                        <a class="dropdown-item btn-alterar-nome" href=""
+                                            data-id="<?= $func['id_funcionario'] ?>"
+                                            data-nome="<?= $func['nome'] ?>">Alterar Nome</a>
+                                        <a class="dropdown-item excluir text-danger" href="#">Excluir</a>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -391,7 +400,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
-    <script src="../js/script.js"></script>
+    <script src="../js/script.js?versao=1"></script>
 </body>
 
 </html>

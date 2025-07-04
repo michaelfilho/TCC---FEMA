@@ -362,6 +362,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </td>
                             <td>
                                 <div class="btn-group">
+                                    <button type="button" class="btn btn-small btn-primary salvar">Salvar</button>
                                     <button type="button" class="btn btn-small btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         Menu
                                     </button>
@@ -375,27 +376,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <a class="dropdown-item excluir text-danger" href="#">Excluir</a>
                                     </div>
                                 </div>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-
-
         </div>
+        </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+    </table>
 
-        <div class="add-funcionario">
-            <h3>Adicionar Funcionário</h3>
 
-            <form method="POST">
-                <input type="text" name="nome" placeholder="Nome" required>
-                <input type="number" name="numero" placeholder="Número" required>
-                <button type="submit" name="adicionar_funcionario" class="btn">Adicionar</button>
-            </form>
-        </div>
-        <div class="total-box">
-            <h3>Total do Horário: <span id="totalHorario">0</span> copos</h3>
-        </div>
+    </div>
+
+    <div class="add-funcionario">
+        <h3>Adicionar Funcionário</h3>
+
+        <form method="POST">
+            <input type="text" name="nome" placeholder="Nome" required>
+            <input type="number" name="numero" placeholder="Número" required>
+            <button type="submit" name="adicionar_funcionario" class="btn">Adicionar</button>
+        </form>
+    </div>
+    <div class="total-box">
+        <h3>Total do Horário: <span id="totalHorario">0</span> copos</h3>
+    </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>

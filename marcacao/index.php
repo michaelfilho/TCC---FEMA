@@ -53,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>TEMPUS - Marcação</title>
     <link rel="shortcut icon" href="../css/imagens/1.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
@@ -127,7 +128,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .btn:hover {
             background-color: #4a5056;
+            color: white;
             transform: scale(1.05);
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            border: none;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
         }
 
         .btn-danger {
@@ -161,7 +172,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background-color: red;
             color: white;
         }
-
 
         .production-form {
             border-radius: 12px;
@@ -207,6 +217,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background-color: #fff;
             width: 100%;
             max-width: 130px;
+        }
+
+        .invalid-input {
+            border: 1px solid red !important;
         }
 
         input:focus,
@@ -323,6 +337,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="actions">
             <button id="proximoHorario" class="btn">Próximo Horário</button>
+            <button id="salvarTudo" class="btn btn-success">Salvar Tudo</button>
             <button id="encerrarDia" class="btn btn-danger">Encerrar Dia</button>
         </div>
 
@@ -362,7 +377,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </td>
                             <td>
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-small btn-primary salvar">Salvar</button>
                                     <button type="button" class="btn btn-small btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         Menu
                                     </button>
@@ -376,33 +390,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <a class="dropdown-item excluir text-danger" href="#">Excluir</a>
                                     </div>
                                 </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
         </div>
-        </td>
-        </tr>
-    <?php endforeach; ?>
-    </tbody>
-    </table>
 
-
-    </div>
-
-    <div class="add-funcionario">
-        <h3>Adicionar Funcionário</h3>
-
-        <form method="POST">
-            <input type="text" name="nome" placeholder="Nome" required>
-            <input type="number" name="numero" placeholder="Número" required>
-            <button type="submit" name="adicionar_funcionario" class="btn">Adicionar</button>
-        </form>
-    </div>
-    <div class="total-box">
-        <h3>Total do Horário: <span id="totalHorario">0</span> copos</h3>
-    </div>
+        <div class="add-funcionario">
+            <h3>Adicionar Funcionário</h3>
+            <form method="POST">
+                <input type="text" name="nome" placeholder="Nome" required>
+                <input type="number" name="numero" placeholder="Número" required>
+                <button type="submit" name="adicionar_funcionario" class="btn">Adicionar</button>
+            </form>
+        </div>
+        <div class="total-box">
+            <h3>Total do Horário: <span id="totalHorario">0</span> copos</h3>
+        </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
     <script src="../js/script.js?versao=1"></script>
 </body>
-
 </html>

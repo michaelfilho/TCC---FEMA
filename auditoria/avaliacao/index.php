@@ -91,7 +91,73 @@ $datas = $pdo->query("SELECT DISTINCT data FROM producao ORDER BY data DESC")->f
     <!-- Bibliotecas necessárias -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="../../js/script.js"></script>
+
+    <!-- Script principal -->
+    <script>
+        const form = document.getElementById('avaliacaoForm');
+        const relatorioResultado = document.getElementById('relatorioResultado');
+        const btnPdf = document.getElementById('baixarPdf');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const data = document.getElementById('data').value;
+
+            fetch('relatorio.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `data=${encodeURIComponent(data)}`
+            })
+            .then(response => response.text())
+            .then(html => {
+                relatorioResultado.innerHTML = html;
+                btnPdf.style.display = 'inline-block'; // Exibe o botão de PDF
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+            });
+        });
+
+        btnPdf.addEventListener('click', function () {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'pt', 'a4'); // retrato
+
+            const content = document.getElementById('relatorioResultado');
+
+            doc.html(content, {
+                callback: function (doc) {
+                    doc.save('relatorio_comportamento.pdf');
+                },
+                x: 10,
+                y: 10,
+                autoPaging: 'text',
+                html2canvas: {
+                    scale: 0.55, // reduz o zoom
+                    useCORS: true
+                }
+            });
+        });
+    document.getElementById('relatorioPorHorario').addEventListener('click', function () {
+        const data = document.getElementById('data').value;
+
+        fetch('relatorio_horario.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `data=${encodeURIComponent(data)}`
+        })
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('relatorioResultado').innerHTML = html;
+            document.getElementById('baixarPdf').style.display = 'inline-block';
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+        });
+    });
+    </script>
 </body>
 
 </html>

@@ -5,7 +5,7 @@ include '../includes/db.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = $_POST['data'];
 
-    $horarios = [8, 10, 12, 14, 16, 18];
+    $horarios = [8, 9, 10, 11, 12, 14, 15, 16, 17, 18];
 
     echo '<table class="relatorio-table">';
     echo '<thead><tr><th>Horário</th>';

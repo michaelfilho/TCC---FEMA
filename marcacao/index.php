@@ -7,16 +7,14 @@ if (!isset($_SESSION['usuario']) || $_SESSION['nivel_acesso'] !== 'marcacao') {
 
 include '../includes/db.php';
 
-// Ordenar por campo 'ordem' se existir, caso contrário por nome
-$funcionarios = $pdo->query("SELECT * FROM funcionarios ORDER BY 
-                            CASE WHEN EXISTS (SELECT 1 FROM information_schema.columns 
-                            WHERE table_name = 'funcionarios' AND column_name = 'ordem') 
-                            THEN ordem ELSE nome END")->fetchAll();
+// Ordenar os funcionários por ordem de cadastro (id_funcionario crescente)
+$funcionarios = $pdo->query("SELECT * FROM funcionarios WHERE ativo = 1 ORDER BY id_funcionario ASC")->fetchAll();
+$total_funcionarios = count($funcionarios);
 
 $meta = $pdo->query("SELECT valor_meta FROM metas ORDER BY id_meta DESC LIMIT 1")->fetchColumn();
 $justificativas = $pdo->query("SELECT * FROM justificativas")->fetchAll();
 
-$horarios = ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00'];
+$horarios = ['08:00', '09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00', '18:00'];
 $horario_atual = $horarios[0];
 
 $hoje = date('Y-m-d');
@@ -53,7 +51,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>TEMPUS - Marcação</title>
     <link rel="shortcut icon" href="../css/imagens/1.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
@@ -168,11 +165,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: white;
         }
 
-        .btn-danger:hover {
-            background-color: red;
-            color: white;
-        }
-
         .production-form {
             border-radius: 12px;
             overflow-y: auto;
@@ -221,13 +213,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .invalid-input {
             border: 1px solid red !important;
-        }
-
-        input:focus,
-        select:focus {
-            outline: none;
-            border-color: #9CA0A6;
-            box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
         }
 
         .total-box {
@@ -296,7 +281,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-weight: bold;
         }
 
-        /* Responsivo */
         @media (max-width: 768px) {
             .info-box {
                 flex-direction: column;
@@ -334,13 +318,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <p>Horário Atual: <?= $horario_atual ?></p>
             <p>Meta: <?= $meta ?> copos</p>
         </div>
-
         <div class="actions">
             <button id="proximoHorario" class="btn">Próximo Horário</button>
             <button id="salvarTudo" class="btn btn-success">Salvar Tudo</button>
             <button id="encerrarDia" class="btn btn-danger">Encerrar Dia</button>
+            <a href="inativos.php" class="btn btn-warning">Funcionários Inativos</a>
         </div>
-
         <div class="production-form">
             <table>
                 <thead>
@@ -358,14 +341,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <?php foreach ($funcionarios as $index => $func): ?>
                         <tr data-funcionario="<?= $func['id_funcionario'] ?>" data-ordem="<?= $index ?>">
                             <td class="ordem-controls">
-                                <button class="btn-move-up" title="Mover para cima">▲</button>
-                                <button class="btn-move-down" title="Mover para baixo">▼</button>
+                                <button class="btn-move-up" title="Mover para cima">&#9650;</button>
+                                <button class="btn-move-down" title="Mover para baixo">&#9660;</button>
                             </td>
                             <td class="funcionario-codigo"><?= $func['numero'] ?></td>
-                            <td><?= $func['nome'] ?></td>
-                            <td>
-                                <input type="number" class="quantidade" min="0" value="0">
-                            </td>
+                            <td class="funcionario-nome"><?= $func['nome'] ?></td>
+                            <td><input type="number" class="quantidade" min="0" value="0"></td>
                             <td class="status">-</td>
                             <td>
                                 <select class="justificativa">
@@ -377,17 +358,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </td>
                             <td>
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-small btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Menu
-                                    </button>
+                                    <button type="button" class="btn btn-small btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Menu</button>
                                     <div class="dropdown-menu">
-                                        <a class="dropdown-item btn-alterar-codigo" href=""
-                                            data-id="<?= $func['id_funcionario'] ?>"
-                                            data-codigo="<?= $func['numero'] ?>">Alterar Código</a>
-                                        <a class="dropdown-item btn-alterar-nome" href=""
-                                            data-id="<?= $func['id_funcionario'] ?>"
-                                            data-nome="<?= $func['nome'] ?>">Alterar Nome</a>
-                                        <a class="dropdown-item excluir text-danger" href="#">Excluir</a>
+                                        <a class="dropdown-item btn-alterar-codigo" href="#" data-id="<?= $func['id_funcionario'] ?>" data-codigo="<?= $func['numero'] ?>">Alterar Código</a>
+                                        <a class="dropdown-item btn-alterar-nome" href="#" data-id="<?= $func['id_funcionario'] ?>" data-nome="<?= $func['nome'] ?>">Alterar Nome</a>
+                                        <a class="dropdown-item text-warning btn-inativar" href="#" data-id="<?= $func['id_funcionario'] ?>">Inativar</a>
                                     </div>
                                 </div>
                             </td>
@@ -396,7 +371,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </tbody>
             </table>
         </div>
-
         <div class="add-funcionario">
             <h3>Adicionar Funcionário</h3>
             <form method="POST">
@@ -406,7 +380,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
         </div>
         <div class="total-box">
-            <h3>Total do Horário: <span id="totalHorario">0</span> copos</h3>
+            <h3>Total do Horário: <span id="totalHorario">0</span> copos &nbsp;&nbsp;|&nbsp;&nbsp; Total de Funcionários: <span id="totalFuncionarios"><?= $total_funcionarios ?></span></h3>
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -414,4 +388,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
     <script src="../js/script.js?versao=1"></script>
 </body>
+
 </html>

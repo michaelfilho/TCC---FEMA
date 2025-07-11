@@ -1,6 +1,6 @@
 <?php
 $host = 'localhost';
-$db   = 'tempus_producao';
+$db   = 'aprimoramento';
 $user = 'root';
 $pass = '';
 $charset = 'utf8mb4';

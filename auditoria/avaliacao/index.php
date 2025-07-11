@@ -60,6 +60,8 @@ $datas = $pdo->query("SELECT DISTINCT data FROM producao ORDER BY data DESC")->f
         <a href="../index.php">Relatório de Produçao</a>
         <a href="../avaliacao/index.php">Relatório de Comportamento</a>
         <a href="../metas/definir_meta.php">Definir Meta</a>
+        <a href="../somar/index.php">Totalizar</a>
+        <a href="../filtro_individual.php">Filtro Individual</a>
         <a href="../../index.php">Voltar</a>
     </div>
 

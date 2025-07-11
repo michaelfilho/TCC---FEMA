@@ -9,8 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $meta = $pdo->query("SELECT valor_meta FROM metas LIMIT 1")->fetch()['valor_meta'];
     
     // Obter funcionários e sua produção
-    $funcionarios = $pdo->query("SELECT f.id_funcionario, f.nome, f.numero FROM funcionarios f")->fetchAll();
-    
+    $funcionarios = $pdo->query("SELECT id_funcionario, nome, numero FROM funcionarios WHERE ativo = 1")->fetchAll();    
     // Obter produção total do dia
     $total_dia = $pdo->prepare("SELECT SUM(quantidade) as total FROM producao WHERE data = ?");
     $total_dia->execute([$data]);

@@ -151,6 +151,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 echo json_encode(['status' => 'success', 'message' => 'Produção transferida com sucesso']);
                 break;
 
+            case 'inativar_funcionario':
+                if (!isset($_POST['id_funcionario'])) {
+                    http_response_code(400);
+                    die(json_encode(['status' => 'error', 'message' => 'ID não informado']));
+                }
+
+                $id = (int) $_POST['id_funcionario'];
+                $stmt = $pdo->prepare("UPDATE funcionarios SET ativo = 0 WHERE id_funcionario = ?");
+                $stmt->execute([$id]);
+
+                echo json_encode(['status' => 'success', 'message' => 'Funcionário inativado']);
+                break;
+
+            case 'ativar_funcionario':
+                if (!isset($_POST['id_funcionario'])) {
+                    http_response_code(400);
+                    die(json_encode(['status' => 'error', 'message' => 'ID não informado']));
+                }
+
+                $id = (int) $_POST['id_funcionario'];
+                $stmt = $pdo->prepare("UPDATE funcionarios SET ativo = 1 WHERE id_funcionario = ?");
+                $stmt->execute([$id]);
+
+                echo json_encode(['status' => 'success', 'message' => 'Funcionário ativado']);
+                break;
+            case 'alterar_nome':
+                if (!isset($_POST['id_funcionario'], $_POST['novo_nome'])) {
+                    http_response_code(400);
+                    die(json_encode(['status' => 'error', 'message' => 'Dados incompletos']));
+                }
+
+                $id_funcionario = (int) $_POST['id_funcionario'];
+                $novo_nome = trim($_POST['novo_nome']);
+
+                if (strlen($novo_nome) < 2) {
+                    http_response_code(400);
+                    die(json_encode(['status' => 'error', 'message' => 'Nome inválido']));
+                }
+
+                $stmt = $pdo->prepare("UPDATE funcionarios SET nome = ? WHERE id_funcionario = ?");
+                $stmt->execute([$novo_nome, $id_funcionario]);
+
+                echo json_encode(['status' => 'success', 'message' => 'Nome alterado com sucesso']);
+                break;
+
             default:
                 http_response_code(400);
                 echo json_encode(['status' => 'error', 'message' => 'Ação desconhecida']);

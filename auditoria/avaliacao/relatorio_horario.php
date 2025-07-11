@@ -5,7 +5,7 @@ include '../../includes/db.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = $_POST['data'];
 
-    $horarios = [8, 10, 12, 14, 16, 18];
+    $horarios = [8, 9, 10, 11, 12, 14, 15, 16, 17, 18];
 
     // Pega lista de funcionários
     $funcionarios = $pdo->query("SELECT id_funcionario, numero, nome FROM funcionarios ORDER BY numero")->fetchAll();

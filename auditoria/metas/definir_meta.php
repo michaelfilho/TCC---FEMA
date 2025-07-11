@@ -154,6 +154,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nova_meta'])) {
         <a href="../index.php">Relatório de Produçao</a>
         <a href="../avaliacao/index.php">Relatório de Comportamento</a>
         <a href="../metas/definir_meta.php">Definir Meta</a>
+        <a href="../somar/index.php">Totalizar</a>
+        <a href="../filtro_individual.php">Filtro Individual</a>
         <a href="../../index.php">Voltar</a>
     </div>
 

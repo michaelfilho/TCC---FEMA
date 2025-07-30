@@ -14,6 +14,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['nivel_acesso'] !== 'auditoria') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TEMPUS - Auditoria</title>
     <link rel="stylesheet" href="../../css/style.css">
+    
     <link rel="shortcut icon" href="../css/imagens/1.png" type="image/x-icon">
     <style>
         body {
@@ -54,12 +55,14 @@ if (!isset($_SESSION['usuario']) || $_SESSION['nivel_acesso'] !== 'auditoria') {
 
 <body>
     <div class="sidebar">
-        <a href="index.php">Relatório de Produção</a>
+        <a href="producao/index.php">Relatório de Produção</a>
         <a href="avaliacao/index.php">Relatório de Comportamento</a>
         <a href="metas/definir_meta.php">Definir Meta</a>
         <a href="somar/index.php">Totalizar</a>
-        <a href="filtro_individual.php">Filtro Individual</a>
+        <a href="Filtro individual/filtro_individual.php">Filtro Individual</a>
+        <a href="cadastrar/cadastar.php">Cadastrar Coordenador</a>
         <a href="../index.php">Voltar</a>
+
     </div>
 </body>
 

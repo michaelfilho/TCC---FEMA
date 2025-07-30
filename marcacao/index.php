@@ -6,8 +6,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['nivel_acesso'] !== 'marcacao') {
 }
 
 include '../includes/db.php';
-
-// Ordenar os funcionários por ordem de cadastro (id_funcionario crescente)
+date_default_timezone_set('America/Sao_Paulo');
 $funcionarios = $pdo->query("SELECT * FROM funcionarios WHERE ativo = 1 ORDER BY id_funcionario ASC")->fetchAll();
 $total_funcionarios = count($funcionarios);
 
@@ -44,7 +43,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -53,14 +51,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Poppins', sans-serif;
         }
-
         body {
             background: #1A1D26;
             color: #1A1D26;
@@ -70,26 +66,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding: 30px;
             min-height: 100vh;
         }
-
         .marcacao-container {
             background-color: #f1f3f6;
             padding: 30px;
             border-radius: 20px;
             width: 100%;
             max-width: 1750px;
-            height: auto;
             box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
             gap: 25px;
         }
-
         .marcacao-container h1 {
             text-align: center;
             font-size: 42px;
             color: #1A1D26;
         }
-
         .info-box {
             display: flex;
             justify-content: space-between;
@@ -98,20 +90,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding: 14px 20px;
             border-radius: 12px;
         }
-
         .info-box p {
             font-size: 18px;
             font-weight: 500;
             color: #1A1D26;
         }
-
         .actions {
             display: flex;
             justify-content: center;
             gap: 20px;
             flex-wrap: wrap;
         }
-
         .btn {
             background-color: #343A40;
             color: #ffffff;
@@ -122,36 +111,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border: none;
             transition: all 0.3s ease;
         }
-
         .btn:hover {
             background-color: #4a5056;
             color: white;
             transform: scale(1.05);
         }
-
         .btn-success {
             background-color: #28a745;
-            border: none;
         }
-
         .btn-success:hover {
             background-color: #218838;
         }
-
         .btn-danger {
             background-color: red;
-            border: none;
         }
-
         .btn-danger:hover {
-            background-color: red;
+            background-color: darkred;
         }
-
         .btn-small {
             padding: 6px 12px;
             font-size: 14px;
         }
-
         .btn-deletar {
             background-color: red;
             color: white;
@@ -159,25 +139,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 14px;
             border: none;
         }
-
-        .btn-deletar:hover {
-            background-color: red;
-            color: white;
-        }
-
         .production-form {
             border-radius: 12px;
             overflow-y: auto;
             max-height: 400px;
             border: 1px solid #ccc;
         }
-
         .production-form table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 100%;
         }
-
         .production-form thead th {
             position: sticky;
             top: 0;
@@ -188,18 +159,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 16px;
             color: #1A1D26;
         }
-
         .production-form th,
         .production-form td {
             padding: 10px;
             text-align: center;
             border-bottom: 1px solid #ccc;
         }
-
         .production-form tr:hover {
             background-color: #f0f2f5;
         }
-
         input[type="number"],
         input[type="text"],
         select {
@@ -210,47 +178,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             width: 100%;
             max-width: 130px;
         }
-
         .invalid-input {
             border: 1px solid red !important;
         }
-
         .total-box {
             text-align: center;
             font-size: 28px;
             font-weight: 600;
         }
-
         .total-box span {
             color: #2c3e50;
         }
-
         .add-funcionario {
             background-color: #e3e6ea;
             padding: 20px;
             border-radius: 12px;
         }
-
         .add-funcionario h3 {
             text-align: center;
             font-size: 26px;
             margin-bottom: 12px;
             color: #1A1D26;
         }
-
         .add-funcionario form {
             display: flex;
             gap: 12px;
             justify-content: center;
             flex-wrap: wrap;
         }
-
         .ordem-controls {
             display: flex;
             flex-direction: column;
             gap: 5px;
         }
-
         .ordem-controls button {
             background-color: #adb5bd;
             border: none;
@@ -261,40 +221,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: #1A1D26;
             transition: background 0.2s ease;
         }
-
         .ordem-controls button:hover {
             background-color: #ced4da;
         }
+        .status-baixo { color: #e74c3c; font-weight: bold; }
+        .status-razoavel { color: #f39c12; font-weight: bold; }
+        .status-meta { color: #27ae60; font-weight: bold; }
 
-        .status-baixo {
-            color: #e74c3c;
-            font-weight: bold;
-        }
-
-        .status-razoavel {
-            color: #f39c12;
-            font-weight: bold;
-        }
-
-        .status-meta {
-            color: #27ae60;
-            font-weight: bold;
-        }
-
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .info-box {
                 flex-direction: column;
-                align-items: center;
-                gap: 8px;
+                align-items: flex-start;
+                gap: 10px;
             }
 
             .actions {
                 flex-direction: column;
+                align-items: center;
+                gap: 10px;
             }
 
-            .add-funcionario form {
-                flex-direction: column;
-                align-items: center;
+            .production-form table,
+            .production-form thead,
+            .production-form tbody,
+            .production-form th,
+            .production-form td,
+            .production-form tr {
+                display: block;
+                width: 100%;
+            }
+
+            .production-form thead {
+                display: none;
+            }
+
+            .production-form tr {
+                margin-bottom: 20px;
+                background-color: #fff;
+                padding: 10px;
+                border-radius: 10px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            }
+
+            .production-form td {
+                text-align: left;
+                padding: 8px 5px;
+                position: relative;
+            }
+
+            .production-form td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                display: block;
+                color: #1A1D26;
+                margin-bottom: 3px;
             }
 
             input[type="number"],
@@ -303,90 +283,95 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 max-width: 100%;
             }
 
-            .production-form {
-                max-height: 300px;
+            .add-funcionario form {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .total-box h3 {
+                font-size: 20px;
+                line-height: 1.4;
+                text-align: center;
             }
         }
     </style>
 </head>
-
 <body>
-    <div class="marcacao-container">
-        <h1>Marcação de Produção</h1>
-        <div class="info-box">
-            <p>Data: <?= date('d/m/Y') ?></p>
-            <p>Horário Atual: <?= $horario_atual ?></p>
-            <p>Meta: <?= $meta ?> copos</p>
-        </div>
-        <div class="actions">
-            <button id="proximoHorario" class="btn">Próximo Horário</button>
-            <button id="salvarTudo" class="btn btn-success">Salvar Tudo</button>
-            <button id="encerrarDia" class="btn btn-danger">Encerrar Dia</button>
-            <a href="inativos.php" class="btn btn-warning">Funcionários Inativos</a>
-        </div>
-        <div class="production-form">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Ordem</th>
-                        <th>Número</th>
-                        <th>Funcionário</th>
-                        <th>Produção</th>
-                        <th>Status</th>
-                        <th>Justificativa</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($funcionarios as $index => $func): ?>
-                        <tr data-funcionario="<?= $func['id_funcionario'] ?>" data-ordem="<?= $index ?>">
-                            <td class="ordem-controls">
-                                <button class="btn-move-up" title="Mover para cima">&#9650;</button>
-                                <button class="btn-move-down" title="Mover para baixo">&#9660;</button>
-                            </td>
-                            <td class="funcionario-codigo"><?= $func['numero'] ?></td>
-                            <td class="funcionario-nome"><?= $func['nome'] ?></td>
-                            <td><input type="number" class="quantidade" min="0" value="0"></td>
-                            <td class="status">-</td>
-                            <td>
-                                <select class="justificativa">
-                                    <option value="">Selecione...</option>
-                                    <?php foreach ($justificativas as $just): ?>
-                                        <option value="<?= $just['id_justificativa'] ?>"><?= $just['descricao'] ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </td>
-                            <td>
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-small btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Menu</button>
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item btn-alterar-codigo" href="#" data-id="<?= $func['id_funcionario'] ?>" data-codigo="<?= $func['numero'] ?>">Alterar Código</a>
-                                        <a class="dropdown-item btn-alterar-nome" href="#" data-id="<?= $func['id_funcionario'] ?>" data-nome="<?= $func['nome'] ?>">Alterar Nome</a>
-                                        <a class="dropdown-item text-warning btn-inativar" href="#" data-id="<?= $func['id_funcionario'] ?>">Inativar</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-        <div class="add-funcionario">
-            <h3>Adicionar Funcionário</h3>
-            <form method="POST">
-                <input type="text" name="nome" placeholder="Nome" required>
-                <input type="number" name="numero" placeholder="Número" required>
-                <button type="submit" name="adicionar_funcionario" class="btn">Adicionar</button>
-            </form>
-        </div>
-        <div class="total-box">
-            <h3>Total do Horário: <span id="totalHorario">0</span> copos &nbsp;&nbsp;|&nbsp;&nbsp; Total de Funcionários: <span id="totalFuncionarios"><?= $total_funcionarios ?></span></h3>
-        </div>
+<div class="marcacao-container">
+    <h1>Marcação de Produção</h1>
+    <div class="info-box">
+        <p>Data: <?= date('d/m/Y') ?></p>
+        <p>Horário Atual: <?= $horario_atual ?></p>
+        <p>Meta: <?= $meta ?> copos</p>
     </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
-    <script src="../js/script.js?versao=1"></script>
+    <div class="actions">
+        <button id="proximoHorario" class="btn">Próximo Horário</button>
+        <button id="salvarTudo" class="btn btn-success">Salvar Tudo</button>
+        <button id="encerrarDia" class="btn btn-danger">Encerrar Dia</button>
+        <a href="inativos.php" class="btn btn-warning">Funcionários Inativos</a>
+    </div>
+    <div class="production-form">
+        <table>
+            <thead>
+                <tr>
+                    <th>Ordem</th>
+                    <th>Número</th>
+                    <th>Funcionário</th>
+                    <th>Produção</th>
+                    <th>Status</th>
+                    <th>Justificativa</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($funcionarios as $index => $func): ?>
+                    <tr data-funcionario="<?= $func['id_funcionario'] ?>" data-ordem="<?= $index ?>">
+                        <td data-label="Ordem" class="ordem-controls">
+                            <button class="btn-move-up" title="Mover para cima">&#9650;</button>
+                            <button class="btn-move-down" title="Mover para baixo">&#9660;</button>
+                        </td>
+                        <td data-label="Número" class="funcionario-codigo"><?= $func['numero'] ?></td>
+                        <td data-label="Funcionário" class="funcionario-nome"><?= $func['nome'] ?></td>
+                        <td data-label="Produção"><input type="number" class="quantidade" min="0" value="0"></td>
+                        <td data-label="Status" class="status">-</td>
+                        <td data-label="Justificativa">
+                            <select class="justificativa">
+                                <option value="">Selecione...</option>
+                                <?php foreach ($justificativas as $just): ?>
+                                    <option value="<?= $just['id_justificativa'] ?>"><?= $just['descricao'] ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </td>
+                        <td data-label="Ações">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-small btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Menu</button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item btn-alterar-codigo" href="#" data-id="<?= $func['id_funcionario'] ?>" data-codigo="<?= $func['numero'] ?>">Alterar Código</a>
+                                    <a class="dropdown-item btn-alterar-nome" href="#" data-id="<?= $func['id_funcionario'] ?>" data-nome="<?= $func['nome'] ?>">Alterar Nome</a>
+                                    <a class="dropdown-item text-warning btn-inativar" href="#" data-id="<?= $func['id_funcionario'] ?>">Inativar</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+    <div class="add-funcionario">
+        <h3>Adicionar Funcionário</h3>
+        <form method="POST">
+            <input type="text" name="nome" placeholder="Nome" required>
+            <input type="number" name="numero" placeholder="Número" required>
+            <button type="submit" name="adicionar_funcionario" class="btn">Adicionar</button>
+        </form>
+    </div>
+    <div class="total-box">
+        <h3>Total do Horário: <span id="totalHorario">0</span> copos &nbsp;&nbsp;|&nbsp;&nbsp; Total de Funcionários: <span id="totalFuncionarios"><?= $total_funcionarios ?></span></h3>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
+<script src="../js/script.js?versao=1"></script>
 </body>
-
 </html>

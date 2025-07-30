@@ -14,40 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $acao = $_POST['acao'] ?? 'salvar_producao';
 
         switch ($acao) {
-            case 'excluir':
-                $id = $_POST['id_funcionario'] ?? '';
-
-                if ($id) {
-                    try {
-                        // Inicia uma transação
-                        $pdo->beginTransaction();
-
-                        // Exclui registros na tabela producao primeiro
-                        $stmt1 = $pdo->prepare("DELETE FROM producao WHERE id_funcionario = ?");
-                        $stmt1->execute([$id]);
-
-                        // Agora exclui o funcionário
-                        $stmt2 = $pdo->prepare("DELETE FROM funcionarios WHERE id_funcionario = ?");
-                        $stmt2->execute([$id]);
-
-                        // Finaliza a transação
-                        $pdo->commit();
-
-                        echo json_encode(['status' => 'success']);
-                        exit;
-                    } catch (Exception $e) {
-                        // Reverte a transação em caso de erro
-                        $pdo->rollBack();
-                        echo json_encode([
-                            'status' => 'error',
-                            'message' => 'Erro ao excluir: ' . $e->getMessage()
-                        ]);
-                        exit;
-                    }
-                } else {
-                    echo json_encode(['status' => 'error', 'message' => 'ID do funcionário inválido.']);
-                    exit;
-                }
 
             case 'salvar_tudo':
                 // Validação dos dados
@@ -60,43 +26,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $data = $_POST['data'];
                 $dados = json_decode($_POST['dados'], true);
 
-                // Converter data do formato brasileiro para o formato do banco (se necessário)
+                // Converter data do formato brasileiro para o formato do banco (yyyy-mm-dd)
                 if (strpos($data, '/') !== false) {
                     $parts = explode('/', $data);
                     $data = $parts[2] . '-' . $parts[1] . '-' . $parts[0];
                 }
 
-                $pdo->beginTransaction();
+                try {
+                    $pdo->beginTransaction();
 
-                foreach ($dados as $item) {
-                    $id_funcionario = (int) $item['id_funcionario'];
-                    $quantidade = (int) $item['quantidade'];
-                    $justificativa = !empty($item['justificativa']) ? (int) $item['justificativa'] : null;
+                    // Buscar a meta vigente no momento da marcação
+                    $meta = $pdo->query("SELECT valor_meta FROM metas ORDER BY id_meta DESC LIMIT 1")->fetchColumn();
+                    $meta = (float)$meta;
 
-                    // Verificar se já existe registro
-                    $stmt = $pdo->prepare("SELECT id_producao FROM producao 
-                                             WHERE id_funcionario = ? AND data = ? AND horario = ?");
-                    $stmt->execute([$id_funcionario, $data, $horario]);
-                    $existe = $stmt->fetch();
+                    foreach ($dados as $item) {
+                        $id_funcionario = (int) $item['id_funcionario'];
+                        $quantidade = (int) $item['quantidade'];
+                        $justificativa = !empty($item['justificativa']) ? (int) $item['justificativa'] : null;
 
-                    if ($existe) {
-                        // Atualizar registro existente
-                        $stmt = $pdo->prepare("UPDATE producao 
-                                                   SET quantidade = ?, id_justificativa = ? 
+                        // Verificar se já existe registro para esse funcionário, data e horário
+                        $stmt = $pdo->prepare("SELECT id_producao FROM producao 
+                                               WHERE id_funcionario = ? AND data = ? AND horario = ?");
+                        $stmt->execute([$id_funcionario, $data, $horario]);
+                        $existe = $stmt->fetch();
+
+                        if ($existe) {
+                            // Atualizar registro existente
+                            $stmt = $pdo->prepare("UPDATE producao 
+                                                   SET quantidade = ?, id_justificativa = ?, meta_utilizada = ? 
                                                    WHERE id_producao = ?");
-                        $stmt->execute([$quantidade, $justificativa, $existe['id_producao']]);
-                    } else {
-                        // Inserir novo registro
-                        $stmt = $pdo->prepare("INSERT INTO producao 
-                                                  (id_funcionario, data, horario, quantidade, id_justificativa) 
-                                                  VALUES (?, ?, ?, ?, ?)");
-                        $stmt->execute([$id_funcionario, $data, $horario, $quantidade, $justificativa]);
+                            $stmt->execute([$quantidade, $justificativa, $meta, $existe['id_producao']]);
+                        } else {
+                            // Inserir novo registro
+                            $stmt = $pdo->prepare("INSERT INTO producao 
+                                (id_funcionario, data, horario, quantidade, id_justificativa, meta_utilizada) 
+                                VALUES (?, ?, ?, ?, ?, ?)");
+                            $stmt->execute([$id_funcionario, $data, $horario, $quantidade, $justificativa, $meta]);
+                        }
                     }
-                }
 
-                $pdo->commit();
-                echo json_encode(['status' => 'success', 'message' => 'Dados salvos com sucesso']);
+                    $pdo->commit();
+                    echo json_encode(['status' => 'success', 'message' => 'Dados salvos com sucesso']);
+                } catch (Exception $e) {
+                    $pdo->rollBack();
+                    http_response_code(500);
+                    echo json_encode(['status' => 'error', 'message' => 'Erro ao salvar dados: ' . $e->getMessage()]);
+                }
                 break;
+
 
             case 'alterar_codigo':
                 // Validação para alterar código

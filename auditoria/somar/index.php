@@ -87,11 +87,12 @@ if (!isset($_SESSION['usuario']) || $_SESSION['nivel_acesso'] !== 'auditoria') {
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
-        <a href="../index.php">Relatório de Produção</a>
+        <a href="../producao/index.php">Relatório de Produção</a>
         <a href="../avaliacao/index.php">Relatório de Comportamento</a>
         <a href="../metas/definir_meta.php">Definir Meta</a>
         <a href="../somar/index.php">Totalizar</a>
-        <a href="../filtro_individual.php">Filtro Individual</a>
+        <a href="../Filtro individual/filtro_individual.php">Filtro Individual</a>
+        <a href="../cadastrar/cadastar.php">Cadastrar Coordenador</a>
         <a href="../../index.php">Voltar</a>
 
     </div>
@@ -128,60 +129,161 @@ if (!isset($_SESSION['usuario']) || $_SESSION['nivel_acesso'] !== 'auditoria') {
     </div>
 
     <!-- Bibliotecas -->
+    <!-- Bibliotecas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <!-- Script -->
     <script>
-        const form = document.getElementById('somatorioForm');
-        const resultadoDiv = document.getElementById('relatorioResultado');
-        const btnPdf = document.getElementById('baixarPdf');
+    const form = document.getElementById('somatorioForm');
+    const resultadoDiv = document.getElementById('relatorioResultado');
+    const btnPdf = document.getElementById('baixarPdf');
 
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const inicio = document.getElementById('dataInicio').value;
-            const fim = document.getElementById('dataFim').value;
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
 
-            if (!inicio || !fim) {
-                alert('Por favor, preencha ambas as datas.');
-                return;
-            }
+        const dataInicio = document.getElementById('dataInicio').value;
+        const dataFim = document.getElementById('dataFim').value;
+        const regexData = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD
 
-            fetch('../somar/relatorio_somatorio.php', {
+        if (!dataInicio || !dataFim) {
+            alert('Por favor, preencha ambas as datas.');
+            return;
+        }
+
+        if (!regexData.test(dataInicio) || !regexData.test(dataFim)) {
+            alert('As datas estão digitadas erradas');
+            return;
+        }
+
+        if (dataInicio > dataFim) {
+            alert('A data de início não pode ser maior que a data de fim.');
+            return;
+        }
+
+        fetch('../somar/relatorio_somatorio.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: `inicio=${encodeURIComponent(inicio)}&fim=${encodeURIComponent(fim)}`
+                body: `inicio=${encodeURIComponent(dataInicio)}&fim=${encodeURIComponent(dataFim)}`
             })
             .then(response => response.text())
             .then(html => {
                 resultadoDiv.innerHTML = html;
                 btnPdf.style.display = 'inline-block';
+                aplicarPaginacao();
             })
             .catch(error => {
                 console.error('Erro ao buscar relatório:', error);
             });
+    });
+
+    btnPdf.addEventListener('click', function() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('p', 'pt', 'a4');
+        const content = document.getElementById('relatorioResultado');
+
+        const dataInicio = document.getElementById('dataInicio').value;
+        const dataFim = document.getElementById('dataFim').value;
+
+        const formatarData = data => {
+            const [ano, mes, dia] = data.split('-');
+            return `${dia}/${mes}/${ano}`;
+        };
+
+        const dataFormatadaInicio = formatarData(dataInicio);
+        const dataFormatadaFim = formatarData(dataFim);
+        const textoRodape = `Período do relatório: ${dataFormatadaInicio} até ${dataFormatadaFim}`;
+
+        const paginacao = document.getElementById('paginacao');
+        if (paginacao) paginacao.style.display = 'none';
+
+        const tabela = content.querySelector('table');
+        const linhas = tabela ? Array.from(tabela.querySelectorAll('tbody tr')) : [];
+        linhas.forEach(linha => linha.style.display = '');
+
+        doc.html(content, {
+            callback: function(doc) {
+                const paginaAltura = doc.internal.pageSize.height;
+                doc.setFontSize(10);
+                doc.text(textoRodape, 40, paginaAltura - 30);
+                doc.save('relatorio_total_intervalo.pdf');
+
+                if (paginacao) paginacao.style.display = 'flex';
+                aplicarPaginacao();
+            },
+            x: 10,
+            y: 10,
+            autoPaging: 'text',
+            html2canvas: {
+                scale: 0.55,
+                useCORS: true
+            }
         });
+    });
 
-        btnPdf.addEventListener('click', function () {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'pt', 'a4');
-            const content = document.getElementById('relatorioResultado');
+    function aplicarPaginacao() {
+        const linhasPorPagina = 5;
+        const tabela = document.querySelector('#relatorioResultado table');
+        if (!tabela) return;
 
-            doc.html(content, {
-                callback: function (doc) {
-                    doc.save('relatorio_total_intervalo.pdf');
-                },
-                x: 10,
-                y: 10,
-                autoPaging: 'text',
-                html2canvas: {
-                    scale: 0.55,
-                    useCORS: true
-                }
+        const linhas = Array.from(tabela.querySelectorAll('tbody tr'));
+        let paginaAtual = 1;
+        const totalPaginas = Math.ceil(linhas.length / linhasPorPagina);
+
+        const antigo = document.getElementById('paginacao');
+        if (antigo) antigo.remove();
+
+        function mostrarPagina(pagina) {
+            const inicio = (pagina - 1) * linhasPorPagina;
+            const fim = inicio + linhasPorPagina;
+
+            linhas.forEach((linha, index) => {
+                linha.style.display = (index >= inicio && index < fim) ? '' : 'none';
             });
-        });
-    </script>
+
+            const info = document.getElementById('paginacaoInfo');
+            if (info) info.textContent = `Página ${pagina} de ${totalPaginas}`;
+        }
+
+        function criarControlesPaginacao() {
+            const container = document.createElement('div');
+            container.id = 'paginacao';
+            container.style.display = 'flex';
+            container.style.justifyContent = 'center';
+            container.style.alignItems = 'center';
+            container.style.gap = '10px';
+            container.style.marginTop = '20px';
+
+            container.innerHTML = `
+                <button id="anterior" class="btn">Anterior</button>
+                <span id="paginacaoInfo">Página ${paginaAtual} de ${totalPaginas}</span>
+                <button id="proximo" class="btn">Próximo</button>`;
+
+            tabela.parentNode.appendChild(container);
+
+            document.getElementById('anterior').onclick = () => {
+                if (paginaAtual > 1) {
+                    paginaAtual--;
+                    mostrarPagina(paginaAtual);
+                }
+            };
+
+            document.getElementById('proximo').onclick = () => {
+                if (paginaAtual < totalPaginas) {
+                    paginaAtual++;
+                    mostrarPagina(paginaAtual);
+                }
+            };
+        }
+
+        criarControlesPaginacao();
+        mostrarPagina(paginaAtual);
+    }
+</script>
+
+
 </body>
+
 </html>

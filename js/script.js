@@ -3,19 +3,31 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function calcularTotal() {
         let total = 0;
+        const totalHorarioEl = document.getElementById('totalHorario');
+        if (!totalHorarioEl) return; // evita erro se elemento não existir
+
         document.querySelectorAll('.quantidade').forEach(input => {
             total += parseInt(input.value) || 0;
         });
-        document.getElementById('totalHorario').textContent = total;
+        totalHorarioEl.textContent = total;
     }
 
     function atualizarStatus() {
-        const meta = parseInt(document.querySelector('.info-box p:nth-child(3)').textContent.split(': ')[1]);
+        const infoBox = document.querySelector('.info-box');
+        if (!infoBox) return;
+
+        const metaText = infoBox.querySelector('p:nth-child(3)');
+        if (!metaText) return;
+
+        const meta = parseInt(metaText.textContent.split(': ')[1]);
+        if (isNaN(meta)) return;
 
         document.querySelectorAll('.quantidade').forEach(input => {
             const quantidade = parseInt(input.value) || 0;
             const row = input.closest('tr');
+            if (!row) return;
             const statusCell = row.querySelector('.status');
+            if (!statusCell) return;
 
             let status = '-';
             let statusClass = '';
@@ -39,8 +51,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function salvarTodosDados() {
-        const horario = document.querySelector('.info-box p:nth-child(2)').textContent.split(': ')[1];
-        const data = document.querySelector('.info-box p:nth-child(1)').textContent.split(': ')[1];
+        const infoBox = document.querySelector('.info-box');
+        if (!infoBox) return;
+
+        const horario = infoBox.querySelector('p:nth-child(2)').textContent.split(': ')[1];
+        const data = infoBox.querySelector('p:nth-child(1)').textContent.split(': ')[1];
         const linhas = document.querySelectorAll('tbody tr');
 
         const dados = [];
@@ -74,6 +89,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const btnSalvarTudo = document.getElementById('salvarTudo');
+        if (!btnSalvarTudo) return;
+
         const textoOriginal = btnSalvarTudo.textContent;
         btnSalvarTudo.textContent = 'Salvando...';
         btnSalvarTudo.disabled = true;
@@ -104,6 +121,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
+    // --------- Eventos e funções do módulo MARCAÇÃO (se existir) ---------
     if (document.querySelector('.marcacao-container')) {
         document.querySelectorAll('.quantidade').forEach(input => {
             input.addEventListener('change', function () {
@@ -112,39 +130,46 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
 
-        document.getElementById('proximoHorario').addEventListener('click', function () {
-            const horarioAtual = document.querySelector('.info-box p:nth-child(2)').textContent.split(': ')[1];
-            const indexAtual = horarios.indexOf(horarioAtual);
+        const proximoBtn = document.getElementById('proximoHorario');
+        if (proximoBtn) {
+            proximoBtn.addEventListener('click', function () {
+                const horarioAtual = document.querySelector('.info-box p:nth-child(2)').textContent.split(': ')[1];
+                const indexAtual = horarios.indexOf(horarioAtual);
 
-            if (indexAtual < horarios.length - 1) {
-                document.querySelector('.info-box p:nth-child(2)').textContent = 'Horário Atual: ' + horarios[indexAtual + 1];
+                if (indexAtual < horarios.length - 1) {
+                    document.querySelector('.info-box p:nth-child(2)').textContent = 'Horário Atual: ' + horarios[indexAtual + 1];
 
-                document.querySelectorAll('.quantidade').forEach(input => {
-                    input.value = '0';
-                });
-                document.querySelectorAll('.justificativa').forEach(select => {
-                    select.value = '';
-                });
-                document.querySelectorAll('.status').forEach(cell => {
-                    cell.textContent = '-';
-                    cell.className = 'status';
-                });
-                document.getElementById('totalHorario').textContent = '0';
-            } else {
-                alert('Todos os horários do dia já foram registrados!');
-            }
-        });
+                    document.querySelectorAll('.quantidade').forEach(input => input.value = '0');
+                    document.querySelectorAll('.justificativa').forEach(select => select.value = '');
+                    document.querySelectorAll('.status').forEach(cell => {
+                        cell.textContent = '-';
+                        cell.className = 'status';
+                    });
+                    const totalHorarioEl = document.getElementById('totalHorario');
+                    if (totalHorarioEl) totalHorarioEl.textContent = '0';
+                } else {
+                    alert('Todos os horários do dia já foram registrados!');
+                }
+            });
+        }
 
-        document.getElementById('encerrarDia').addEventListener('click', function () {
-            if (confirm('Deseja realmente encerrar o dia? Salve os dados antes !!!')) {
-                alert('Dia encerrado com sucesso!');
-                window.location.href = '../index.php';
-            }
-        });
+        const encerrarBtn = document.getElementById('encerrarDia');
+        if (encerrarBtn) {
+            encerrarBtn.addEventListener('click', function () {
+                if (confirm('Deseja realmente encerrar o dia? Salve os dados antes !!!')) {
+                    alert('Dia encerrado com sucesso!');
+                    window.location.href = '../index.php';
+                }
+            });
+        }
 
-        document.getElementById('salvarTudo').addEventListener('click', salvarTodosDados);
+        const salvarTudoBtn = document.getElementById('salvarTudo');
+        if (salvarTudoBtn) {
+            salvarTudoBtn.addEventListener('click', salvarTodosDados);
+        }
     }
 
+    // --------- Eventos e funções do módulo RELATÓRIO (se existir) ---------
     if (document.getElementById('relatorioForm')) {
         document.getElementById('relatorioForm').addEventListener('submit', function (e) {
             e.preventDefault();
@@ -155,18 +180,164 @@ document.addEventListener('DOMContentLoaded', function () {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `data=${data}`
+                body: `data=${encodeURIComponent(data)}`
             })
                 .then(response => response.text())
                 .then(html => {
-                    document.getElementById('relatorioResultado').innerHTML = html;
+                    const resultado = document.getElementById('relatorioResultado');
+                    if (resultado) {
+                        resultado.innerHTML = html;
+                        aplicarPaginacao();
+                        const btnPdf = document.getElementById('baixarPdf');
+                        if (btnPdf) btnPdf.style.display = 'inline-block';
+                    }
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 });
         });
+
+        const relatorioHorarioBtn = document.getElementById('relatorioHorario');
+        if (relatorioHorarioBtn) {
+            relatorioHorarioBtn.addEventListener('click', function () {
+                const data = document.getElementById('data').value;
+
+                fetch('relatorio_horario.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `data=${encodeURIComponent(data)}`
+                })
+                    .then(response => response.text())
+                    .then(html => {
+                        const resultado = document.getElementById('relatorioResultado');
+                        if (resultado) {
+                            resultado.innerHTML = html;
+                            aplicarPaginacao();
+                            const btnPdf = document.getElementById('baixarPdf');
+                            if (btnPdf) btnPdf.style.display = 'inline-block';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+        }
+
+        const baixarPdfBtn = document.getElementById('baixarPdf');
+        if (baixarPdfBtn) {
+            baixarPdfBtn.addEventListener('click', function () {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('p', 'pt', 'a4');
+                const content = document.getElementById('relatorioResultado');
+                const dataSelecionada = document.getElementById('data')?.value;
+
+                if (!content || !dataSelecionada) return;
+
+                const dataFormatada = (() => {
+                    const partes = dataSelecionada.split('-');
+                    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+                })();
+
+                const textoRodape = `Data do relatório: ${dataFormatada}`;
+
+                const tabela = content.querySelector('table');
+                const linhas = tabela ? Array.from(tabela.querySelectorAll('tbody tr')) : [];
+
+                const estadoOriginal = linhas.map(linha => linha.style.display);
+
+                linhas.forEach(linha => linha.style.display = '');
+
+                const paginacao = document.getElementById('paginacao');
+                if (paginacao) paginacao.style.display = 'none';
+
+                doc.html(content, {
+                    callback: function (doc) {
+                        const paginaAltura = doc.internal.pageSize.height;
+                        doc.setFontSize(10);
+                        doc.text(textoRodape, 40, paginaAltura - 30);
+
+                        doc.save('relatorio_producao.pdf');
+                        linhas.forEach((linha, index) => {
+                            linha.style.display = estadoOriginal[index];
+                        });
+                        if (paginacao) paginacao.style.display = 'flex';
+                        aplicarPaginacao();
+                    },
+                    x: 10,
+                    y: 10,
+                    autoPaging: 'text',
+                    html2canvas: {
+                        scale: 0.55,
+                        useCORS: true
+                    }
+                });
+            });
+        }
+
+        function aplicarPaginacao() {
+            const linhasPorPagina = 7;
+            const tabela = document.querySelector('#relatorioResultado table');
+            if (!tabela) return;
+
+            const linhas = Array.from(tabela.querySelectorAll('tbody tr'));
+            let paginaAtual = 1;
+            const totalPaginas = Math.ceil(linhas.length / linhasPorPagina);
+
+            // Remove paginação antiga se existir
+            const antigo = document.getElementById('paginacao');
+            if (antigo) antigo.remove();
+
+            function mostrarPagina(pagina) {
+                const inicio = (pagina - 1) * linhasPorPagina;
+                const fim = inicio + linhasPorPagina;
+
+                linhas.forEach((linha, index) => {
+                    linha.style.display = (index >= inicio && index < fim) ? '' : 'none';
+                });
+
+                const info = document.getElementById('paginacaoInfo');
+                if (info) info.textContent = `Página ${pagina} de ${totalPaginas}`;
+            }
+
+            function criarControlesPaginacao() {
+                const container = document.createElement('div');
+                container.id = 'paginacao';
+                container.style.display = 'flex';
+                container.style.justifyContent = 'center';
+                container.style.alignItems = 'center';
+                container.style.gap = '10px';
+                container.style.marginTop = '20px';
+
+                container.innerHTML = `
+                    <button id="anterior">Anterior</button>
+                    <span id="paginacaoInfo" style="margin: 0 10px;">Página ${paginaAtual} de ${totalPaginas}</span>
+                    <button id="proximo">Próximo</button>
+                `;
+                tabela.parentNode.appendChild(container);
+
+                document.getElementById('anterior').onclick = () => {
+                    if (paginaAtual > 1) {
+                        paginaAtual--;
+                        mostrarPagina(paginaAtual);
+                    }
+                };
+
+                document.getElementById('proximo').onclick = () => {
+                    if (paginaAtual < totalPaginas) {
+                        paginaAtual++;
+                        mostrarPagina(paginaAtual);
+                    }
+                };
+            }
+
+            criarControlesPaginacao();
+            mostrarPagina(paginaAtual);
+        }
     }
 
+    // --------- Funções para mover linhas e editar dados, inativar, alterar nome (mantidas do seu script) ---------
     function moverLinha(linha, direcao) {
         const tbody = linha.parentNode;
         const linhas = Array.from(tbody.children);
@@ -344,9 +515,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // Configurações iniciais
     configurarInativarFuncionario();
     configurarAlterarCodigo();
     configurarAlterarNome();
     calcularTotal();
     atualizarStatus();
+
 });

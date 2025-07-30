@@ -47,30 +47,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         body {
             font-family: 'Orbitron', sans-serif;
             background-image: url('css/imagens/13.jpg');
-            /* imagem de fundo mantida */
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
             height: 100vh;
             color: white;
-            display: flex;
-            justify-content: center;
-            /* centraliza horizontalmente */
-            align-items: center;
-            /* centraliza verticalmente */
+            position: relative;
+            overflow: hidden;
         }
 
         .login-container {
-            margin-top: 150px;
-            margin-right: 1050px;
+            position: absolute;
+            bottom: 120px;
+            left: 200px;
             padding: 30px 40px;
             border-radius: 25px;
-            /* cantos ainda mais suaves */
-            width: 400px;
-            /* largura maior */
-            max-width: 90%;
-            /* responsivo em telas menores */
+            width: 100%;
+            max-width: 400px;
         }
 
         .form-group {
@@ -79,8 +73,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .form-group label {
-            font-size: 14px;
-            color: #1A1D26;
+            font-size: 1px;
+            color: #f1f1f1;
             margin-bottom: 5px;
             display: block;
         }
@@ -120,21 +114,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .alert {
             background-color: rgba(255, 0, 0, 0.15);
-            /* vermelho mais suave */
             color: #ff4d4d;
-            /* vermelho mais claro */
             padding: 12px 18px;
-            /* mais espaço interno */
             border-radius: 5px;
-            /* cantos mais arredondados */
             margin-bottom: 20px;
-            /* mais respiro abaixo */
             font-size: 14px;
-            /* tamanho de texto suave */
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-            /* leve sombra para profundidade */
+        }
+
+        @media (max-width: 768px) {
+            .login-container {
+                position: static;
+                margin: 20px auto;
+                width: 90%;
+            }
         }
     </style>
+
 </head>
 
 <body>

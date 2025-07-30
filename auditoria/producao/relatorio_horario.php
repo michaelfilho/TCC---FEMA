@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../includes/db.php';
+include '../../includes/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = $_POST['data'];

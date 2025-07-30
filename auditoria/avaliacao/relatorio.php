@@ -8,16 +8,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // 1. Obter os IDs reais das justificativas
     $justificativas = $pdo->query("SELECT id_justificativa, descricao FROM justificativas")->fetchAll();
 
-    // 2. Atualizar o mapeamento para incluir 'falta'
+    // 2. Atualizar o mapeamento para incluir 'saida_antecipada'
     $mapeamento = [
         'broca_morta' => null,
         'fungos' => null,
         'crisalida' => null,
         'colaborador' => null,
-        'falta' => null
+        'falta' => null,
+        'saida_antecipada' => null  // nova chave
     ];
 
-    // 3. Buscar também o id da justificativa 'falta'
+    // 3. Mapear os IDs das justificativas pelo texto
     foreach ($justificativas as $just) {
         $desc_lower = strtolower($just['descricao']);
         if (strpos($desc_lower, 'broca') !== false || strpos($desc_lower, 'morta') !== false) {
@@ -30,10 +31,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mapeamento['colaborador'] = $just['id_justificativa'];
         } elseif (strpos($desc_lower, 'falta') !== false) {
             $mapeamento['falta'] = $just['id_justificativa'];
+        } elseif (strpos($desc_lower, 'saída antecipada') !== false || strpos($desc_lower, 'saida antecipada') !== false) {
+            $mapeamento['saida_antecipada'] = $just['id_justificativa'];
         }
     }
 
-    // 4. Preparar a query com a coluna "falta"
+    // 4. Preparar a query incluindo a coluna "saida_antecipada"
     $stmt = $pdo->prepare("
         SELECT 
             f.id_funcionario, 
@@ -44,7 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             SUM(CASE WHEN p.id_justificativa = ? THEN 1 ELSE 0 END) as fungos,
             SUM(CASE WHEN p.id_justificativa = ? THEN 1 ELSE 0 END) as crisalida,
             SUM(CASE WHEN p.id_justificativa = ? THEN 1 ELSE 0 END) as colaborador,
-            MAX(CASE WHEN p.id_justificativa = ? THEN 1 ELSE 0 END) as falta
+            MAX(CASE WHEN p.id_justificativa = ? THEN 1 ELSE 0 END) as falta,
+            MAX(CASE WHEN p.id_justificativa = ? THEN 1 ELSE 0 END) as saida_antecipada
         FROM 
             funcionarios f
         LEFT JOIN 
@@ -64,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mapeamento['crisalida'],
         $mapeamento['colaborador'],
         $mapeamento['falta'],
+        $mapeamento['saida_antecipada'], // novo parâmetro
         $data
     ]);
 
@@ -81,6 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <th>Crisálida</th>
             <th>Colaborador</th>
             <th>Falta</th>
+            <th>Saída Antecipada</th>
           </tr></thead>';
     echo '<tbody>';
 
@@ -94,13 +100,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo '<td>' . htmlspecialchars($func['fungos']) . ' vez(es)</td>';
             echo '<td>' . htmlspecialchars($func['crisalida']) . ' vez(es)</td>';
             echo '<td>' . htmlspecialchars($func['colaborador']) . ' vez(es)</td>';
-            echo '<td>' . ($func['falta'] == 1 ? '1 ' : '-') . '</td>';
+            echo '<td>' . ($func['falta'] == 1 ? '1' : '-') . '</td>';
+            echo '<td>' . ($func['saida_antecipada'] == 1 ? '1' : '-') . '</td>';
             echo '</tr>';
         }
     } else {
-        echo '<tr><td colspan="8" style="text-align:center;">Nenhum dado encontrado para a data selecionada.</td></tr>';
+        echo '<tr><td colspan="9" style="text-align:center;">Nenhum dado encontrado para a data selecionada.</td></tr>';
     }
 
     echo '</tbody>';
     echo '</table>';
 }
+?>

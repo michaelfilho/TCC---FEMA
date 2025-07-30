@@ -16,9 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $total_geral = 0;
 
     foreach ($funcionarios as $func) {
-        $stmt = $pdo->prepare("SELECT quantidade FROM producao WHERE id_funcionario = ? AND data BETWEEN ? AND ?");
+        $stmt = $pdo->prepare("SELECT quantidade, meta_utilizada FROM producao WHERE id_funcionario = ? AND data BETWEEN ? AND ?");
         $stmt->execute([$func['id_funcionario'], $inicio, $fim]);
-        $producoes = $stmt->fetchAll();
+        $producoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $total_func = 0;
         $abaixo = 0;
@@ -26,8 +26,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $atingida = 0;
 
         foreach ($producoes as $p) {
-            $q = $p['quantidade'];
+            if (!isset($p['meta_utilizada']) || $p['meta_utilizada'] === null) {
+                continue; // ignora registros sem meta
+            }
+
+            $q = (int)$p['quantidade'];
+            $meta = (float)$p['meta_utilizada'];
+
+            if ($q <= 0) continue;
+
             $total_func += $q;
+
             if ($q < $meta * 0.5) {
                 $abaixo++;
             } elseif ($q < $meta) {
@@ -53,4 +62,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo "<tfoot><tr class='relatorio-total'><td colspan='4'>Total Geral Produzido</td><td colspan='2'>{$total_geral} copos</td></tr></tfoot>";
     echo '</table>';
 }
-?>
